@@ -1,0 +1,28 @@
+import "lib_http"
+import "os"
+
+NewApp = () => {
+    return {
+        routes: {},
+
+        Get: (r, h) => this.HandleFunc(r, h),
+        Post: (r, h) => this.HandleFunc(r, h),
+        Put: (r, h) => this.HandleFunc(r, h),
+        Delete: (r, h) => this.HandleFunc(r, h),
+
+        HandleFunc: (route, handler) => {
+            this.routes[route] = handler
+        },
+
+        RunAndOpen: (port) => {
+            if os.Platform() == "windows" {
+                os.Exec("cmd", "/c", "start http://localhost:" + port)
+            } else {
+                os.Exec("open", "http://localhost:" + port)
+            }
+            this.Run(":" + port)
+        }
+
+        Run: lib_http.ListenAndServe
+    }
+}

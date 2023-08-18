@@ -1,0 +1,185 @@
+
+ToObject = (str) => {
+    return parseValue(str, 0)[0]
+}
+
+
+escapeMap = {
+    "\"": "\"",
+    "\\": "\\",
+    "/": "\/",
+    "b": "\b",
+    "f": "\f",
+    "n": "\n",
+    "r": "\r",
+    "t": "\t"
+}
+
+
+numberMap = {
+    "0": 0,
+    "1": 1,
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5,
+    "6": 6,
+    "7": 7,
+    "8": 8,
+    "9": 9,
+}
+
+
+digits = "0123456789"
+nonzero = "123456789"
+
+
+parseValue = (str, i) => {
+    i = skipWhitespace(str, i)
+
+    c = str[i]
+
+    if c == "\"" {
+        return parseString(str, i)
+    } else if digits has c or c == "-" {
+        return parseNumber(str, i)
+    } else if c == "{" {
+        return parseObject(str, i)
+    } else if c == "[" {
+        return parseArray(str, i)
+    } else if c == "t" {
+        i += 4
+        return true, i
+    } else if c == "f" {
+        i += 5
+        return false, i
+    } else if c == "n" {
+        i += 4
+        return null, i
+    }
+    
+    return null, i + 1
+}
+
+
+skipWhitespace = (str, i) => {
+    while i < str.Len() and [" ", "\n", "\r", "\t"] has str[i] {
+        i++
+    }
+
+    return i
+}
+
+
+parseString = (str, i) => {
+    value = []
+    i++
+
+    while str[i] != "\"" {
+
+        if str[i] == "\\" {
+
+            i++
+
+            if scapeMap has str[i] {
+                value.Add(escapeMap[str[i]])
+            } else {
+                value.Add(str[i])
+            }
+        } else {
+            value.Add(str[i])
+        }
+
+        i++
+    }
+    i++
+                
+    return value.Join(""), i
+}
+
+
+parseNumber = (str, i) => {
+    value = 0
+    neg = false
+    
+    if str[i] == "-" {
+        neg = true
+        i++
+    }
+
+    if str[i] == "0" {
+        i++
+    } else if nonzero has str[i] {
+        while i < str.Len() and digits has str[i] {
+            value = value * 10 + numberMap[str[i]]
+            i++
+        }
+    }
+
+    pos = 0
+    if i < str.Len() and str[i] == "." {
+        i++
+        while i < str.Len() and digits has str[i] {
+            value += (numberMap[str[i]] / 10 ** pos)
+            pos++
+            i++
+        }
+    }
+
+    if neg {
+        value = -value
+    }
+
+    return value, i
+}
+
+
+parseObject = (str, i) => {
+    value = {}
+    i++
+    i = skipWhitespace(str, i)
+
+    while str[i] != "}" {
+        key, i = parseString(str, i)
+        i = skipWhitespace(str, i)
+
+        if str[i] == ":" {
+            i++
+            value[key], i = parseValue(str, i)
+        } else {
+            value[key] = null
+        }
+
+        if str[i] == "," {
+            i++
+        }
+
+        i = skipWhitespace(str, i)
+    }
+
+    i++
+    return value, i
+}
+
+
+parseArray = (str, i) => {
+    value = []
+    i++
+
+    i = skipWhitespace(str, i)
+    
+    while str[i] != "]" {
+        v, i = parseValue(str, i)
+        value.Add(v)
+        
+        if str[i] == "," {
+            i++
+        }
+
+        i = skipWhitespace(str, i)
+    }
+
+    i++
+
+    return value, i
+}
