@@ -144,6 +144,14 @@ func stringSlice(args []*OwlObj) (*OwlObj, bool) {
 		endIndex = len(list)
 	}
 
+	if startIndex > endIndex {
+		return NewString("test"), true
+	}
+
+	if startIndex >= len(list) || endIndex > len(list) {
+		return nil, false
+	}
+
 	return NewString(list[startIndex:endIndex]), true
 }
 
