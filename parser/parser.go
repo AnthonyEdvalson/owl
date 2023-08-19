@@ -43,6 +43,8 @@ type Parser struct {
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/operators/
 // Parser will do high precedence operations before low
 
+// Think of precedence as a ranking of white operators can consume others.
+// Low priority operators will consume the higher ones.
 var precedences = map[lexer.TokenType]int{
 	"LPAREN":              HIGH,
 	"QUESTIONLPAREN":      HIGH,
@@ -71,6 +73,7 @@ var precedences = map[lexer.TokenType]int{
 	"COLON":               IFEXP,
 	"ARROW":               ARROW,
 	"TRIPLEDOT":           ARROW,
+	"WHEN":                OVERLOAD,
 	"PIPE":                OVERLOAD,
 	"COMMA":               COMMA,
 	"ASSIGN":              ASSIGN,
@@ -110,6 +113,7 @@ func NewParser(input []lexer.Token) *Parser {
 	p.registerPrefix("LBRACE", p.parseBrace)
 	p.registerPrefix("LBRACKET", p.parseBracket)
 	p.registerPrefix("TRIPLEDOT", p.parseSpread)
+	p.registerPrefix("WHEN", p.parseWhen)
 
 	p.infixParseFns = make(map[lexer.TokenType]infixParseFn)
 	p.registerInfix("PLUS", p.parseBinOp)
@@ -242,11 +246,6 @@ func (p *Parser) expressionToAssign(expr Expression) Assign {
 
 		return a
 
-	/*case *Map:
-	a := &AssignMap{}
-	a.KeyAssign = expr.(*Map)
-	return a*/
-
 	case *Spread:
 		a := &AssignSpread{}
 		a.Target = p.expressionToAssign(e.Target)
@@ -256,6 +255,63 @@ func (p *Parser) expressionToAssign(expr Expression) Assign {
 	default:
 		p.error(fmt.Sprintf("Cannot use %T in assignment", expr), p.current())
 		return nil
+	}
+}
+
+func (p *Parser) expressionToAssignWithMatching(expr Expression, i int) (Assign, Expression, int) {
+	// 1. (a, 1, b) -> (a, $1, b) assignment, ($1 == 1) match
+	// 2. (a..., 0) -> ($0) assignment, ($0 == 0) match
+
+	if expr == nil {
+		a := &AssignNull{}
+		a.token = p.current()
+		return a, nil, i
+	}
+
+	switch e := expr.(type) {
+	case *Name:
+		a := &AssignName{}
+		a.Name = e.Name
+		a.token = e.token
+		return a, nil, i
+
+	case *List:
+		a := &AssignList{}
+		a.Parts = make([]Assign, len(e.Parts))
+		a.token = e.token
+
+		var match Expression
+		for j, part := range e.Parts {
+			var condition Expression
+			a.Parts[j], condition, i = p.expressionToAssignWithMatching(part, i)
+			if condition != nil {
+				if match == nil {
+					match = condition
+				} else {
+					match = &BinOp{Left: match, Op: "and", Right: condition}
+				}
+			}
+		}
+
+		return a, match, i
+
+	case *Spread:
+		a := &AssignSpread{}
+		a.Target = p.expressionToAssign(e.Target)
+		a.token = e.token
+		return a, nil, i
+
+	default:
+		name := "$" + fmt.Sprint(i)
+		a := &AssignName{}
+		a.Name = name
+		a.token = p.current()
+
+		n := &Name{}
+		n.Name = name
+		n.token = p.current()
+
+		return a, &BinOp{Left: n, Op: "==", Right: expr}, i + 1
 	}
 }
 
@@ -485,6 +541,7 @@ func Precedence(tokenType lexer.TokenType) int {
 // ======================================================================================
 
 func (p *Parser) parseExpression(precedence int) Expression {
+	p.consumeAny("NEWLINE")
 	t := p.current()
 	prefix := p.prefixParseFns[t.Type]
 
@@ -702,7 +759,7 @@ func (p *Parser) parseArrow(left Expression) Expression {
 	fd := &FunctionDef{}
 	fd.token = p.current()
 
-	fd.Arg = p.expressionToAssign(left)
+	fd.Arg, fd.Condition, _ = p.expressionToAssignWithMatching(left, 0)
 
 	p.consume("ARROW")
 
@@ -869,6 +926,8 @@ func (p *Parser) parseOverload(left Expression) Expression {
 	o.token = p.current()
 
 	_, isFunc := left.(*FunctionDef)
+	// This restriction might not be necessary. It might be possible to allow
+	// any expression, and have overflow be a generic binop
 	if !isFunc {
 		p.error("Left side of | operator must be a function definition", p.current())
 		return nil
@@ -893,4 +952,10 @@ func (p *Parser) parseOverload(left Expression) Expression {
 
 	o.Cases = cases
 	return o
+}
+
+func (p *Parser) parseWhen() Expression {
+	p.consume("WHEN")
+	// TODO
+	return nil
 }

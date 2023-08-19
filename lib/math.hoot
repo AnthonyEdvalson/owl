@@ -20,15 +20,3 @@ max = (a, b) => {
     }
     return a
 }
-
-sum = (lst) => {
-    s = 0
-    for v in lst {
-        s += v
-    }
-    return s
-}
-
-avg = (lst) => {
-    return sum(lst) / lst.Len()
-}

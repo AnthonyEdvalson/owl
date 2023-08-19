@@ -631,6 +631,25 @@ func TestSpread(t *testing.T) {
 	}
 }
 
+func TestPatternMatch(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"f = (0) => 1 \n return f(0)", 1},
+		{"f = (0) => 1 \n | (n) => n * f(n - 1) \n return f(4)", 24},
+		{"f = (b, 0) => 0 \n | (b, 1) => b | (b, -1) => -b \n return f(5, -1)", -5},
+		{"f = (0, 1, 0) => -1 | (a, b, c) => a + b + c \n return f(1, 2, 3) * f(0, 1, 0)", -6},
+		{"f = (a, 2, ...b, 3) => b.Reduce((x, y) => x + y, 0) + a | (a, ...b) => b.Reduce((x, y) => x + y, 0) - a \n return f(1, 2, 3, 4, 5, 3)", 13},
+		{"f = (a, 2, ...b, 3) => b.Reduce((x, y) => x + y, 0) + a | (a, ...b) => b.Reduce((x, y) => x + y, 0) - a \n return f(1, 2, 3, 4, 5, 4)", 17},
+	}
+
+	for _, tt := range tests {
+		evaluated := eval(tt.input)
+		testInt(t, evaluated, tt.expected)
+	}
+}
+
 // Tests are broken, libs are located basedon the directory things were executed from. Current design assumes that libs
 // Are in the /lib directory adjacent to the executable. This is not the case when running tests.
 /*func TestImport(t *testing.T) {

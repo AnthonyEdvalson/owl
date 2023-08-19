@@ -25,7 +25,7 @@ func listenAndServe(args []*OwlObj) (*OwlObj, bool) {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		lock.Lock()
 		defer lock.Unlock()
-		
+
 		res := transformResponse(w)
 		req := transformRequest(r)
 
@@ -33,7 +33,7 @@ func listenAndServe(args []*OwlObj) (*OwlObj, bool) {
 
 		for matcher, handler := range urls {
 			matched, err := regexp.MatchString(matcher, url)
-			
+
 			if !matched || err != nil {
 				continue
 			}
@@ -51,23 +51,15 @@ func listenAndServe(args []*OwlObj) (*OwlObj, bool) {
 
 func HttpLibExport() *OwlObj {
 	o := NewOwlObj()
-	
+
 	o.SetAttr("ListenAndServe", NewCallBridge(listenAndServe))
 
 	return o
 }
 
-
-
-
-
-
-
-
-
 func transformRequest(r *http.Request) *OwlObj {
 	o := NewOwlObj()
-	
+
 	o.SetAttr("Method", NewString(r.Method))
 	o.SetAttr("URL", NewString(r.URL.String()))
 	o.SetAttr("Header", transformHeader(r.Header))
@@ -89,8 +81,8 @@ func transformHeader(h http.Header) *OwlObj {
 
 func transformBody(f io.ReadCloser) *OwlObj {
 	buf := new(bytes.Buffer)
-    buf.ReadFrom(f)
-    newStr := buf.String()
+	buf.ReadFrom(f)
+	newStr := buf.String()
 
 	return NewString(newStr)
 }
@@ -104,7 +96,7 @@ func transformResponse(w http.ResponseWriter) *OwlObj {
 
 		w.Header().Set(name, value)
 
-		return NewNull(), true
+		return nil, true
 	}))
 
 	o.SetAttr("SetStatus", NewCallBridge(func(args []*OwlObj) (*OwlObj, bool) {
@@ -115,12 +107,12 @@ func transformResponse(w http.ResponseWriter) *OwlObj {
 		}
 
 		w.WriteHeader(int(code))
-		return NewNull(), true
+		return nil, true
 	}))
 
-	o.SetAttr("SetBody", NewCallBridge(func (args []*OwlObj) (*OwlObj, bool) { 
+	o.SetAttr("SetBody", NewCallBridge(func(args []*OwlObj) (*OwlObj, bool) {
 		w.Write([]byte(args[1].TrueStr()))
-		return NewNull(), true
+		return nil, true
 	}))
 
 	return o

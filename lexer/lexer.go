@@ -46,6 +46,7 @@ var reMap = []TokenMatcher{
 	{"IMPORT", regexp.MustCompile(`import`)},
 	{"PRINT", regexp.MustCompile(`print`)},
 	{"NULL", regexp.MustCompile(`null`)},
+	{"WHEN", regexp.MustCompile(`when`)},
 
 	{"ARROW", regexp.MustCompile(`=>`)},
 

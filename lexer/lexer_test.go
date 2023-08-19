@@ -482,3 +482,25 @@ func TestPipe(t *testing.T) {
 
 	compareShortTokens(t, expected, tokens)
 }
+
+func TestWhen(t *testing.T) {
+	tokens := tokenize("x = when a < b (a, b) => 1")
+	expected := []ShortToken{
+		{"NAME", "x"},
+		{"ASSIGN", "="},
+		{"WHEN", "when"},
+		{"NAME", "a"},
+		{"COMPARE", "<"},
+		{"NAME", "b"},
+		{"LPAREN", "("},
+		{"NAME", "a"},
+		{"COMMA", ","},
+		{"NAME", "b"},
+		{"RPAREN", ")"},
+		{"ARROW", "=>"},
+		{"NUMBER", "1"},
+		{"EOF", ""},
+	}
+
+	compareShortTokens(t, expected, tokens)
+}

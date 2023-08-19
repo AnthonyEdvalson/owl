@@ -357,6 +357,8 @@ func (t *TreeExecutor) EvalExpression(expr parser.Expression) *OwlObj {
 		return t.evalUnaryOp(expr)
 	case *parser.FunctionDef:
 		return t.evalFunctionDef(expr)
+	case *parser.Overload:
+		return t.evalOverload(expr)
 	case *parser.FunctionCall:
 		return t.evalFunctionCall(expr)
 	case *parser.IfExpression:
@@ -649,8 +651,15 @@ func (t *TreeExecutor) evalSlice(i *parser.Slice) *OwlObj {
 }
 
 func (t *TreeExecutor) evalFunctionDef(f *parser.FunctionDef) *OwlObj {
-	fn := NewFunc(t, f.Arg, f.Body, t.bottomFrame())
+	fn := NewFunc(t, f, t.bottomFrame())
 	return fn
+}
+
+func (t *TreeExecutor) evalOverload(o *parser.Overload) *OwlObj {
+	for i := 0; i < len(o.Cases)-1; i++ {
+		o.Cases[i].Else = &o.Cases[i+1]
+	}
+	return t.evalFunctionDef(&o.Cases[0])
 }
 
 func (t *TreeExecutor) evalFunctionCall(c *parser.FunctionCall) *OwlObj {

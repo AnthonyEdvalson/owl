@@ -23,6 +23,9 @@ func NewOwlObj() *OwlObj {
 	obj.SetDeepAttr("iter", NewCallBridge(objIter))
 	obj.SetDeepAttr("has", NewCallBridge(objHas))
 	obj.SetDeepAttr("coalesce", NewCallBridge(objCoalesce))
+	obj.SetDeepAttr("and", NewCallBridge(objAnd))
+	obj.SetDeepAttr("or", NewCallBridge(objOr))
+	obj.SetDeepAttr("not", NewCallBridge(objNot))
 
 	return &obj
 }
@@ -71,13 +74,40 @@ func objCoalesce(args []*OwlObj) (*OwlObj, bool) {
 	return a, true
 }
 
+func objAnd(args []*OwlObj) (*OwlObj, bool) {
+	a := args[1]
+	if a.IsTruthy() {
+		b, bOk := args[2].Call(nil)
+		if bOk {
+			return b, true
+		}
+	}
+	return a, true
+}
+
+func objOr(args []*OwlObj) (*OwlObj, bool) {
+	a := args[1]
+	if !a.IsTruthy() {
+		b, bOk := args[2].Call(nil)
+		if bOk {
+			return b, true
+		}
+	}
+	return a, true
+}
+
+func objNot(args []*OwlObj) (*OwlObj, bool) {
+	a := args[1]
+	return NewBool(!a.IsTruthy()), true
+}
+
 func objSetIndex(args []*OwlObj) (*OwlObj, bool) {
 	this := args[0]
 	index := args[1].TrueStr()
 
 	this.SetAttr(index, args[2])
 
-	return NewNull(), true
+	return nil, true
 }
 
 func objIter(args []*OwlObj) (*OwlObj, bool) {

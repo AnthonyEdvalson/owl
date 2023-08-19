@@ -9,6 +9,13 @@ It shamelessly steals ideas from many different languages, here are a few highli
 let factorial = (0) => 1
               : (n) => n * f(n - 1)
 
+f = (n) ? n == 1 => 1
+  | (n) => n * f(n - 1) 
+
+x = (a, b) => 1
+  | when 0 == b => 0
+  | when a < b (a, b) => -1 
+
 // Simple list, set, and map definitions
 let l = [1, 2, 3]
 let s = {1, 2, 3}

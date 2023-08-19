@@ -85,7 +85,7 @@ func listSetIndex(args []*OwlObj) (*OwlObj, bool) {
 
 	raw[index32] = args[2]
 
-	return NewNull(), true
+	return nil, true
 }
 
 func listSlice(args []*OwlObj) (*OwlObj, bool) {

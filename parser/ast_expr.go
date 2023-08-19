@@ -70,6 +70,7 @@ type FunctionDef struct {
 	Arg       Assign
 	Condition Expression
 	Body      []Statement
+	Else      *FunctionDef
 	token     lexer.Token
 }
 
@@ -255,13 +256,14 @@ func (f *FunctionCall) ToString() string {
 func (f *FunctionDef) ToString() string {
 	var b strings.Builder
 
+	if f.Condition != nil {
+		b.WriteString("when ")
+		b.WriteString(f.Condition.ToString())
+	}
+
 	b.WriteString("(")
 	if f.Arg != nil {
 		b.WriteString(f.Arg.ToString())
-	}
-	if f.Condition != nil {
-		b.WriteString(" if ")
-		b.WriteString(f.Condition.ToString())
 	}
 	b.WriteString(") => {\n")
 

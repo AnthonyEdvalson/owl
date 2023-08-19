@@ -580,36 +580,17 @@ func TestFunctionCaseMatching(t *testing.T) {
 		"a = (0) => 3",
 		"a = (0) => 3 | \n (a) => a",
 		"a = (0, b) => 0 | (1, b) => b | (-1, b) => -b",
-		"a = (? > 3, ? == 4) => 2 | (a, b) => a + b",
+		"a = when a > 3, b == 4 (a, b) => 2 | (a, b) => a + b",
 	}
 
 	expected := []string{
-		"a = ($0 if $0 == 0) => {\nreturn 3\n}",
-		"a = <($0 if $0 == 0) => {\nreturn 3\n} | (a) => {\nreturn a\n}>",
-		"a = <($0, b if $0 == 0) => {\nreturn 3\n} | ($0, b if $0 == 1) => {\nreturn b\n} | ($0, b if $0 == (-1)) => {\nreturn (-b)\n}>",
-		"a = <($0, $1 if ($0 > 3) and ($1 == 4)) => {\nreturn 2\n} | (a, b) => {\nreturn (a + b)\n}>",
+		"a = when ($0 == 0)($0) => {\nreturn 3\n}",
+		"a = <when ($0 == 0)($0) => {\nreturn 3\n} | (a) => {\nreturn a\n}>",
+		"a = <when ($0 == 0)($0, b) => {\nreturn 0\n} | when ($0 == 1)($0, b) => {\nreturn b\n} | when ($0 == (-1))($0, b) => {\nreturn (-b)\n}>",
+		"a = <when ((a > 3) and (b == 4))(a, b) => {\nreturn 2\n} | (a, b) => {\nreturn (a + b)\n}>",
 	}
 
 	for i := 0; i < len(input); i++ {
 		compareTrees(t, expected[i], parse(t, input[i]))
 	}
 }
-
-/*
-
-(a, b) => a + b
-(0, b) => 0
-(? < 0) => -1
-([a, ...rest], c) => rest
-
-f = ([]) => 0
-| ([a, ...rest]) => 1 + f(rest)
-
-SIMPLER VERSION
-
-(0, b) => 0
-becomes
-(a, b | a == 0) => 0
-which is not too bad
-
-*/
