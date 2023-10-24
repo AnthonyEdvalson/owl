@@ -2,9 +2,10 @@ package parser
 
 import (
 	"fmt"
-	"owl/lexer"
 	"strconv"
 	"strings"
+
+	"github.com/AnthonyEdvalson/owl/lexer"
 )
 
 // ======================================================================================

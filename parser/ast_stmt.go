@@ -1,8 +1,9 @@
 package parser
 
 import (
-	"owl/lexer"
 	"strings"
+
+	"github.com/AnthonyEdvalson/owl/lexer"
 )
 
 /*
@@ -25,68 +26,68 @@ type Statement interface {
 }
 
 type Let struct {
-	token   lexer.Token
-	Target  Assign
-	Value   Expression
+	token  lexer.Token
+	Target Assign
+	Value  Expression
 }
 
 type For struct {
-	token   lexer.Token
+	token  lexer.Token
 	Target Assign
 	Iter   Expression
 	Body   []Statement
 }
 
 type While struct {
-	token   lexer.Token
-	Test   Expression
-	Body   []Statement
+	token lexer.Token
+	Test  Expression
+	Body  []Statement
 }
 
 type If struct {
-	token   lexer.Token
-	Test   Expression
-	Body   []Statement
-	Else   []Statement
+	token lexer.Token
+	Test  Expression
+	Body  []Statement
+	Else  []Statement
 }
 
 type Throw struct {
-	token   lexer.Token
+	token lexer.Token
 	Value Expression
 }
 
 type Try struct {
 	token   lexer.Token
-	Body   []Statement
-	Catch  []Statement
+	Body    []Statement
+	Catch   []Statement
 	Finally []Statement
 }
 
 type ExpressionStatement struct {
-	token   lexer.Token
+	token lexer.Token
 	Value Expression
 }
 
 type Return struct {
-	token   lexer.Token
+	token lexer.Token
 	Value Expression
 }
 
-type Break struct{
-	token   lexer.Token
+type Break struct {
+	token lexer.Token
 }
 
-type Continue struct{
-	token   lexer.Token
+type Continue struct {
+	token lexer.Token
 }
 
 type Import struct {
-	token   lexer.Token
-	Name    string
+	token lexer.Token
+	Name  string
 }
 
 type Print struct {
-	token   lexer.Token
+	token lexer.Token
 	Value Expression
 }
 
@@ -254,28 +255,28 @@ func (p *Print) ToString() string {
 	return b.String()
 }
 
-func (s *Let) enforceStatement() {}
-func (f *For) enforceStatement() {}
-func (w *While) enforceStatement() {}
-func (i *If) enforceStatement() {}
-func (t *Throw) enforceStatement() {}
-func (t *Try) enforceStatement() {}
+func (s *Let) enforceStatement()                 {}
+func (f *For) enforceStatement()                 {}
+func (w *While) enforceStatement()               {}
+func (i *If) enforceStatement()                  {}
+func (t *Throw) enforceStatement()               {}
+func (t *Try) enforceStatement()                 {}
 func (e *ExpressionStatement) enforceStatement() {}
-func (r *Return) enforceStatement() {}
-func (b *Break) enforceStatement() {}
-func (c *Continue) enforceStatement() {}
-func (i *Import) enforceStatement() {}
-func (p *Print) enforceStatement() {}
+func (r *Return) enforceStatement()              {}
+func (b *Break) enforceStatement()               {}
+func (c *Continue) enforceStatement()            {}
+func (i *Import) enforceStatement()              {}
+func (p *Print) enforceStatement()               {}
 
-func (n *Let) Token() lexer.Token { return n.token }
-func (n *For) Token() lexer.Token { return n.token }
-func (n *While) Token() lexer.Token { return n.token }
-func (n *If) Token() lexer.Token { return n.token }
-func (n *Throw) Token() lexer.Token { return n.token }
-func (n *Try) Token() lexer.Token { return n.token }
+func (n *Let) Token() lexer.Token                 { return n.token }
+func (n *For) Token() lexer.Token                 { return n.token }
+func (n *While) Token() lexer.Token               { return n.token }
+func (n *If) Token() lexer.Token                  { return n.token }
+func (n *Throw) Token() lexer.Token               { return n.token }
+func (n *Try) Token() lexer.Token                 { return n.token }
 func (n *ExpressionStatement) Token() lexer.Token { return n.token }
-func (n *Return) Token() lexer.Token { return n.token }
-func (n *Break) Token() lexer.Token { return n.token }
-func (n *Continue) Token() lexer.Token { return n.token }
-func (n *Import) Token() lexer.Token { return n.token }
-func (n *Print) Token() lexer.Token { return n.token }
+func (n *Return) Token() lexer.Token              { return n.token }
+func (n *Break) Token() lexer.Token               { return n.token }
+func (n *Continue) Token() lexer.Token            { return n.token }
+func (n *Import) Token() lexer.Token              { return n.token }
+func (n *Print) Token() lexer.Token               { return n.token }

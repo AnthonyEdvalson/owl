@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"owl/exec"
-	"owl/lexer"
-	"owl/parser"
+
+	"github.com/AnthonyEdvalson/owl/exec"
+	"github.com/AnthonyEdvalson/owl/lexer"
+	"github.com/AnthonyEdvalson/owl/parser"
 )
 
 const PROMPT = ">> "

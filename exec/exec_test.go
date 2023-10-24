@@ -3,9 +3,10 @@ package exec
 import (
 	"fmt"
 	"os"
-	"owl/lexer"
-	"owl/parser"
 	"testing"
+
+	"github.com/AnthonyEdvalson/owl/lexer"
+	"github.com/AnthonyEdvalson/owl/parser"
 )
 
 // THINGS TO TEST

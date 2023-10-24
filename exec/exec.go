@@ -3,9 +3,10 @@ package exec
 import (
 	"fmt"
 	"os"
-	"owl/lexer"
-	"owl/parser"
 	"path/filepath"
+
+	"github.com/AnthonyEdvalson/owl/lexer"
+	"github.com/AnthonyEdvalson/owl/parser"
 )
 
 type Frame map[string]*OwlObj

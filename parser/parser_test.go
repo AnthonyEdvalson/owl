@@ -1,8 +1,9 @@
 package parser
 
 import (
-	"owl/lexer"
 	"testing"
+
+	"github.com/AnthonyEdvalson/owl/lexer"
 )
 
 func compareTrees(t *testing.T, expected string, actual Node) {

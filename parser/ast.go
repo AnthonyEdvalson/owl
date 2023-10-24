@@ -1,8 +1,9 @@
 package parser
 
 import (
-	"owl/lexer"
 	"strings"
+
+	"github.com/AnthonyEdvalson/owl/lexer"
 )
 
 /*
@@ -50,7 +51,7 @@ type Program struct {
 
 func (p *Program) ToString() string {
 	var b strings.Builder
-	
+
 	for _, s := range p.Body {
 		b.WriteString(s.ToString())
 	}

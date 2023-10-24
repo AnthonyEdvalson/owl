@@ -1,8 +1,9 @@
 package parser
 
 import (
-	"owl/lexer"
 	"strings"
+
+	"github.com/AnthonyEdvalson/owl/lexer"
 )
 
 /*

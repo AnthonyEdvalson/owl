@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
-	"owl/exec"
-	"owl/repl"
 	"path/filepath"
+
+	"github.com/AnthonyEdvalson/owl/exec"
+	"github.com/AnthonyEdvalson/owl/repl"
 )
 
 func main() {

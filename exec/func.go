@@ -1,8 +1,9 @@
 package exec
 
 import (
-	"owl/parser"
 	"strings"
+
+	"github.com/AnthonyEdvalson/owl/parser"
 )
 
 type FuncData struct {
