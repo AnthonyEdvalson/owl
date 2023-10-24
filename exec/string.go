@@ -27,6 +27,7 @@ func NewString(v string) *OwlObj {
 	s.SetAttr("ReReplace", NewCallBridge(stringRegexReplace))
 	s.SetAttr("ReIndex", NewCallBridge(stringRegexIndexOf))
 	s.SetAttr("Index", NewCallBridge(stringIndexOf))
+	s.SetAttr("Trim", NewCallBridge(stringTrim))
 	s.Raw = v
 
 	return s
@@ -206,4 +207,11 @@ func stringRegexIndexOf(args []*OwlObj) (*OwlObj, bool) {
 	}
 
 	return NewList([]*OwlObj{NewInt(start), NewInt(end)}), true
+}
+
+func stringTrim(args []*OwlObj) (*OwlObj, bool) {
+	s := args[0].TrueStr()
+	cut := args[1].TrueStr()
+
+	return NewString(strings.Trim(s, cut)), true
 }
