@@ -193,10 +193,10 @@ func ExecuteFile(path string) (*OwlObj, *TreeExecutor, []parser.ParserError) {
 		panic(err)
 	}
 
-	return Execute(string(bytes), path)
+	return Execute(string(bytes), path, map[string]*OwlObj{})
 }
 
-func Execute(s string, path string) (*OwlObj, *TreeExecutor, []parser.ParserError) {
+func Execute(s string, path string, globals map[string]*OwlObj) (*OwlObj, *TreeExecutor, []parser.ParserError) {
 	l := lexer.NewLexer(s)
 	tok := l.Tokenize(filepath.Base(path))
 	p := parser.NewParser(tok)
@@ -207,6 +207,9 @@ func Execute(s string, path string) (*OwlObj, *TreeExecutor, []parser.ParserErro
 	}
 
 	e := NewTreeExecutor(path)
+	for k, v := range globals {
+		e.set(k, v)
+	}
 	o := e.ExecProgram(program)
 	return o, e, nil
 }
