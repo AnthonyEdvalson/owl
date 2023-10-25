@@ -9,54 +9,6 @@ import (
 	"github.com/AnthonyEdvalson/owl/parser"
 )
 
-// THINGS TO TEST
-// Statements
-// - let
-// - return
-// - if
-// - while
-// - for
-// - break
-// - continue
-// - expression statement
-//
-// Expressions
-// - augassign
-// - assign
-// - number
-// - string
-// - bool
-// - variable
-// - function call
-// - function def
-// - list
-// - map
-// - set
-// - unary
-// - binary
-// - if expression
-// - index
-// - comma
-// - objects
-// - attributes
-// - increment / decrement
-//
-// Assignments
-// - simple
-// - comma
-// - index
-// - list
-// - map
-// - attributes
-//
-// Misc
-// - recursion
-// - self, simulated objects
-// - closures
-// - scope
-// - pattern matching functions
-// - imports
-
 func testTruthy(t *testing.T, actual *OwlObj, expected bool) {
 	truthy := actual.IsTruthy()
 
@@ -137,7 +89,7 @@ func eval(s string) *OwlObj {
 	wd, _ := os.Getwd()
 
 	e := NewTreeExecutor(wd)
-	o := e.ExecProgram(program)
+	o := e.ExecProgram(program, make(map[string]*OwlObj))
 	return o
 }
 

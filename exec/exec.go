@@ -207,15 +207,15 @@ func Execute(s string, path string, globals map[string]*OwlObj) (*OwlObj, *TreeE
 	}
 
 	e := NewTreeExecutor(path)
-	for k, v := range globals {
-		e.set(k, v)
-	}
-	o := e.ExecProgram(program)
+	o := e.ExecProgram(program, globals)
 	return o, e, nil
 }
 
-func (t *TreeExecutor) ExecProgram(program *parser.Program) *OwlObj {
+func (t *TreeExecutor) ExecProgram(program *parser.Program, globals map[string]*OwlObj) *OwlObj {
 	t.resetStack()
+	for k, v := range globals {
+		t.set(k, v)
+	}
 	s := t.ExecBlock(program.Body)
 
 	return s.Return

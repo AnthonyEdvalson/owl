@@ -19,7 +19,7 @@ func Start(in io.Reader, out io.Writer) {
 	wd, _ := os.Getwd()
 
 	env := exec.NewTreeExecutor(wd)
-	env.ExecProgram(&parser.Program{Body: []parser.Statement{}})
+	env.ExecProgram(&parser.Program{Body: []parser.Statement{}}, make(map[string]*exec.OwlObj))
 
 	for {
 		fmt.Printf(PROMPT)
