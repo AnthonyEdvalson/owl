@@ -25,6 +25,7 @@ func NewString(v string) *OwlObj {
 	s.SetAttr("Len", NewCallBridge(stringLen))
 	s.SetAttr("Replace", NewCallBridge(stringReplace))
 	s.SetAttr("ReReplace", NewCallBridge(stringRegexReplace))
+	s.SetAttr("ReMatch", NewCallBridge(stringRegexMatch))
 	s.SetAttr("ReIndex", NewCallBridge(stringRegexIndexOf))
 	s.SetAttr("Index", NewCallBridge(stringIndexOf))
 	s.SetAttr("Trim", NewCallBridge(stringTrim))
@@ -190,6 +191,17 @@ func stringRegexReplace(args []*OwlObj) (*OwlObj, bool) {
 	exp := regexp.MustCompile(re)
 
 	return NewString(exp.ReplaceAllString(s, repl)), true
+}
+
+func stringRegexMatch(args []*OwlObj) (*OwlObj, bool) {
+	s := args[0].TrueStr()
+	re := args[1].TrueStr()
+
+	exp := regexp.MustCompile(re)
+
+	matches := exp.MatchString(s)
+
+	return NewBool(matches), true
 }
 
 func stringRegexIndexOf(args []*OwlObj) (*OwlObj, bool) {

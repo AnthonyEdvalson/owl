@@ -643,3 +643,20 @@ func TestHTTP(t *testing.T) {
 		eval(tt)
 	}
 }*/
+
+func TestRegex(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"return 'aabbaxxb'.ReReplace('ax*b', 'a_b')", "aa_bba_b"},
+		{"return 'aabbaxxb'.ReIndex('ax*b')::str()", "[1, 3]"},
+		{"return 'aabbaxxb'.ReMatch('^ax*b')::str()", "false"},
+		{"return 'aabbaxxb'.ReMatch('^a.*b')::str()", "true"},
+	}
+
+	for _, tt := range tests {
+		evaluated := eval(tt.input)
+		testString(t, evaluated, tt.expected)
+	}
+}
