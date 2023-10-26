@@ -48,3 +48,17 @@ complex * complex == {real: -5, imag: 12}
 # Building
 
 Bulding the code is as simple as running `build.sh` or  `build.bat` depending on your operating system of choice. They both just run `go build` and copy the standard library into the bin folder. You can optionally add the bin folder to $PATH so you can execute the `owl` command more easily.
+
+# Updating
+
+When releasing a new version, change the git tags so that go's package manager knows there has been an update.
+
+```
+go mod tidy
+go test ./...
+
+commit your changes...
+
+git tag vX.X.X
+git push origin vX.X.X
+```

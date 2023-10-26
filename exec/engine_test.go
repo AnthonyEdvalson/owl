@@ -20,7 +20,7 @@ func TestEngine(t *testing.T) {
 		panic("Failed to load program")
 	}
 
-	params.globals["globalVar"] = NewString("world")
+	params.Globals["globalVar"] = NewString("world")
 
 	result, _ := ExecuteProgram(params)
 	if result.TrueStr() != "Hello, world!" {

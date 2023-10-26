@@ -12,9 +12,9 @@ import (
 )
 
 type OwlParams struct {
-	path    string
-	program *parser.Program
-	globals map[string]*OwlObj
+	Path    string
+	Program *parser.Program
+	Globals map[string]*OwlObj
 }
 
 func LoadProgramFromPath(path string) (bool, *OwlParams, []parser.ParserError) {
@@ -42,13 +42,13 @@ func LoadProgram(contents string, fileName string) (*OwlParams, []parser.ParserE
 	}
 
 	return &OwlParams{
-		path:    fileName,
-		program: program,
-		globals: map[string]*OwlObj{},
+		Path:    fileName,
+		Program: program,
+		Globals: map[string]*OwlObj{},
 	}, nil
 }
 
 func ExecuteProgram(params *OwlParams) (*OwlObj, *TreeExecutor) {
-	t := NewTreeExecutor(params.path)
-	return t.ExecProgram(params.program, params.globals), t
+	t := NewTreeExecutor(params.Path)
+	return t.ExecProgram(params.Program, params.Globals), t
 }
