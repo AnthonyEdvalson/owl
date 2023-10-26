@@ -19,10 +19,18 @@ func main() {
 	if argc == 2 {
 		path := filepath.Join(os.Args[1], "main.hoot")
 
-		_, _, errors := exec.ExecuteFile(path)
-
-		for _, error := range errors {
-			fmt.Printf("%d:%d: %s\r\n", error.Token.Line, error.Token.Column, error.Message)
+		ok, params, parseErr := exec.LoadProgramFromPath(path)
+		if !ok {
+			if parseErr == nil {
+				fmt.Println("Failed to locate program")
+				return
+			}
+			for _, e := range parseErr {
+				fmt.Printf("%d:%d: %s\r\n", e.Token.Line, e.Token.Column, e.Message)
+			}
+			return
 		}
+
+		_, _ = exec.ExecuteProgram(params)
 	}
 }

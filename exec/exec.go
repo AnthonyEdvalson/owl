@@ -2,8 +2,6 @@ package exec
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 
 	"github.com/AnthonyEdvalson/owl/lexer"
 	"github.com/AnthonyEdvalson/owl/parser"
@@ -184,31 +182,6 @@ func (t *TreeExecutor) getFromAssign(assign parser.Assign) *OwlObj {
 		t.panic("Unable to get "+a.ToString()+" in assignment", a.Token())
 		return nil
 	}
-}
-
-func ExecuteFile(path string) (*OwlObj, *TreeExecutor, []parser.ParserError) {
-	bytes, err := os.ReadFile(path)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return Execute(string(bytes), path, map[string]*OwlObj{})
-}
-
-func Execute(s string, path string, globals map[string]*OwlObj) (*OwlObj, *TreeExecutor, []parser.ParserError) {
-	l := lexer.NewLexer(s)
-	tok := l.Tokenize(filepath.Base(path))
-	p := parser.NewParser(tok)
-	program := p.Parse()
-
-	if len(p.Errors) > 0 {
-		return nil, nil, p.Errors
-	}
-
-	e := NewTreeExecutor(path)
-	o := e.ExecProgram(program, globals)
-	return o, e, nil
 }
 
 func (t *TreeExecutor) ExecProgram(program *parser.Program, globals map[string]*OwlObj) *OwlObj {

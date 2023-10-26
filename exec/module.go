@@ -38,15 +38,21 @@ func NewModule(name string, currentPath string) (*OwlObj, string) {
 
 	alias := strings.TrimSuffix(filepath.Base(pathStr), ".hoot")
 
-	_, e, err := ExecuteFile(pathStr)
+	ok, params, parseErr := LoadProgramFromPath(pathStr)
 
-	if len(err) > 0 {
-		for _, e := range err {
+	if !ok && parseErr == nil {
+		panic("Failed to locate module: " + name)
+	}
+
+	if !ok && len(parseErr) > 0 {
+		for _, e := range parseErr {
 			fmt.Println(e.Token.File + ":" + fmt.Sprint(e.Token.Line) + ":" + fmt.Sprint(e.Token.Column) + ": " + e.Message)
 		}
 
 		panic("Failed to load module: " + name)
 	}
+
+	_, e := ExecuteProgram(params)
 
 	o := NewOwlObj()
 	o.Attr = e.Frames[0]
